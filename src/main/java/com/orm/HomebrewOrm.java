@@ -17,8 +17,9 @@ public class HomebrewOrm {
 
 	private String databasePath;
 	private ArrayList<Map<String, Object>> datas;
-	private final String DATA_FILE_NAME = "/data";
-	private final String TABLE_FILE_NAME = "/tables";
+	private ArrayList<Map<String, Object>> tables;
+	private final String DATA_DIR_NAME = "/data";
+	private final String TABLE_DIR_NAME = "/tables";
 	private static HomebrewOrm instance = null;	
 	
 	private HomebrewOrm() {
@@ -105,7 +106,7 @@ public class HomebrewOrm {
 	
 	private void loadData() {
 		ObjectMapper mapper = new ObjectMapper();
-		File dataDir = new File(this.databasePath + DATA_FILE_NAME);
+		File dataDir = new File(this.databasePath + DATA_DIR_NAME);
 		String[] dataFiles = dataDir.list();
 		for(String file : dataFiles) {
 			try {
@@ -136,6 +137,20 @@ public class HomebrewOrm {
 	}
 	private void loadTables() {
 		ObjectMapper mapper = new ObjectMapper();
+		File dataDir = new File(this.databasePath + TABLE_DIR_NAME);
+		String[] tableFiles = dataDir.list();
+		System.out.println(tableFiles.length);
+		for(String file : tableFiles) {
+			try {
+				tables.add(mapper.readValue(new File(dataDir + "/" + file), Map.class));
+			} catch (JsonParseException e) {
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	private void writeTables() {
