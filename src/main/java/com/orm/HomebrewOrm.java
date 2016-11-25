@@ -72,8 +72,8 @@ public class HomebrewOrm {
 		listeTransactions.add(transaction);
 	}
 	
-	public void updateTable() {
-		
+	public void updateTable(String table, String collumn, HomebrewOrmDataTypes type) {
+		listeTransactions.add("updateTable;"+table+";"+collumn+";"+type+";");
 	}
 	
 	public void deleteValue() {
