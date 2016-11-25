@@ -79,7 +79,12 @@ public class HomebrewOrm {
 	
 	public void deleteValue(String tableName,
 							HashMap<String, String> where) {
-		
+		String transaction = "deleteValue;"+tableName+"where{";
+		for(Map.Entry<String, String> whereValue : where.entrySet()) {
+			transaction+=whereValue.getKey()+":"+whereValue.getValue()+",";
+		}
+		transaction+="}";
+		listeTransactions.add(transaction);
 	}
 	
 	public void removeValue() {
