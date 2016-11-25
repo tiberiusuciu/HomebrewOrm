@@ -9,7 +9,8 @@ public class HomebrewOrm {
 	public ArrayList<HomebrewOrmTable> listeTables;
 	
 	private HomebrewOrm() {
-		
+		listeTransactions = new ArrayList<String>();
+		listeTables = new ArrayList<HomebrewOrmTable>();
 	}
 	
 	public HomebrewOrm getInstance() {
@@ -19,8 +20,8 @@ public class HomebrewOrm {
 		return instance;
 	}
 	
-	public void insert() {
-		
+	public void insert(HomebrewOrmObject object, String tableName) {
+		listeTransactions.add("insert "+object.toHomebrewOrmData()+" into "+ tableName);
 	}
 	
 	public boolean createTable (HomebrewOrmTable table) {
