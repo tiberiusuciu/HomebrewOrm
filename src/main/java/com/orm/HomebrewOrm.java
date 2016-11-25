@@ -33,8 +33,8 @@ public class HomebrewOrm {
 		if(path != null) {
 			this.databasePath = path;
 		}
-		loadData();
-		loadTables();
+		loadTable("anothertest.json");
+		loadTable("another.json");
 	}
 	
 	public static HomebrewOrm getInstance() {
@@ -121,19 +121,21 @@ public class HomebrewOrm {
 		
 	}
 	
-	private void loadData() {
+	private void loadData(String dataToLoad) {
 		ObjectMapper mapper = new ObjectMapper();
 		File dataDir = new File(this.databasePath + DATA_DIR_NAME);
 		String[] dataFiles = dataDir.list();
 		for(String file : dataFiles) {
-			try {
-				datas.add(mapper.readValue(new File(dataDir + "/" + file), Map.class));
-			} catch (JsonParseException e) {
-				e.printStackTrace();
-			} catch (JsonMappingException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
+			if(file.equals(dataToLoad)){
+				try {
+					datas.add(mapper.readValue(new File(dataDir + "/" + file), Map.class));
+				} catch (JsonParseException e) {
+					e.printStackTrace();
+				} catch (JsonMappingException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -152,33 +154,36 @@ public class HomebrewOrm {
 		}
 		return flag;
 	}
-	private void loadTables() {
+	private void loadTable(String tableToLoad) {
 		ObjectMapper mapper = new ObjectMapper();
 		File tableDir = new File(this.databasePath + TABLE_DIR_NAME);
 		String[] tableFiles = tableDir.list();
 		if(tableFiles != null) {
 			for(String file : tableFiles) {
-				try {
-					Map<String,Object> table = mapper.readValue(new File(tableDir + "/" + file), Map.class);
-					String tableName = (String) table.get("name");
-					ArrayList<Map<String, Object>> values = (ArrayList<Map<String, Object>>) table.get("values");
-					HomebrewOrmTable homebrewOrmTable = new HomebrewOrmTable();
-					homebrewOrmTable.setTableName(tableName);
-					
-					for(Map<String, Object> value : values) {
-						String columnName = (String) value.get("columnName");
-						HomebrewOrmDataTypes type =  HomebrewOrmDataTypes.fromString((String)value.get("type"));
-						HomebrewOrmTableValue homebrewOrmTableValue = new HomebrewOrmTableValue(columnName, type);
-						homebrewOrmTable.addValue(homebrewOrmTableValue);
+				if(file.equals(tableToLoad)) {
+					try {
+						Map<String,Object> table = mapper.readValue(new File(tableDir + "/" + file), Map.class);
+						String tableName = (String) table.get("name");
+						ArrayList<Map<String, Object>> values = (ArrayList<Map<String, Object>>) table.get("values");
+						HomebrewOrmTable homebrewOrmTable = new HomebrewOrmTable();
+						homebrewOrmTable.setTableName(tableName);
+						
+						for(Map<String, Object> value : values) {
+							String columnName = (String) value.get("columnName");
+							HomebrewOrmDataTypes type =  HomebrewOrmDataTypes.fromString((String)value.get("type"));
+							HomebrewOrmTableValue homebrewOrmTableValue = new HomebrewOrmTableValue(columnName, type);
+							homebrewOrmTable.addValue(homebrewOrmTableValue);
+						}
+						
+						listeTables.add(homebrewOrmTable);
+						loadData(tableToLoad);
+					} catch (JsonParseException e) {
+						e.printStackTrace();
+					} catch (JsonMappingException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
-					
-					listeTables.add(homebrewOrmTable);
-				} catch (JsonParseException e) {
-					e.printStackTrace();
-				} catch (JsonMappingException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
 				}
 			}
 		}
