@@ -1,21 +1,37 @@
 package com.orm;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class HomebrewOrm {
 	
-	public HomebrewOrm instance = null;	
 	public ArrayList<String> listeTransactions;
 	public ArrayList<HomebrewOrmTable> listeTables;
+
+	private String databasePath;
+	private String dataPath;
+	private String tablePath;
+	private static HomebrewOrm instance = null;	
 	
 	private HomebrewOrm() {
+		String path = loadConfiguration();
 		listeTransactions = new ArrayList<String>();
 		listeTables = new ArrayList<HomebrewOrmTable>();
+		if(path != null) {
+			this.databasePath = path;
+		}
+		loadData();
+		loadTables();
 	}
 	
-	public HomebrewOrm getInstance() {
+	public static HomebrewOrm getInstance() {
 		if(instance == null) {
 			instance = new HomebrewOrm();
 		}
@@ -103,5 +119,33 @@ public class HomebrewOrm {
 			}
 		}
 		return flag;
+	}
+	private void loadTables() {
+		
+	}
+	
+	private void writeTables() {
+		
+	}
+	
+	private String loadConfiguration() {
+		ObjectMapper mapper = new ObjectMapper();
+		String configurationPath = null;
+		try {
+			Map<String,Object> configuration = mapper.readValue(new File("./config.json"), Map.class);
+			if(configuration != null) {
+				configurationPath = (String) configuration.get("database");
+			}
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return configurationPath;
+	}
+	public static void main(String[] args) {
+		HomebrewOrm homebrewOrm = HomebrewOrm.getInstance();
 	}
 }
