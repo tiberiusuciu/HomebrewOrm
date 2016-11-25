@@ -15,21 +15,21 @@ public enum HomebrewOrmDataTypes {
 
 	public static HomebrewOrmDataTypes fromString(String text) {
 		if (text != null) {
-			if (HomebrewOrmDataTypes.stringType.equals(text)) {
+			if (text.equalsIgnoreCase(stringType.value)) {
 				return HomebrewOrmDataTypes.stringType;
-			} else if (HomebrewOrmDataTypes.integerType.equals(text)) {
+			} else if (text.equalsIgnoreCase(integerType.value)) {
 				return HomebrewOrmDataTypes.integerType;
-			} else if (HomebrewOrmDataTypes.doubleType.equals(text)) {
+			} else if (text.equalsIgnoreCase(doubleType.value)) {
 				return HomebrewOrmDataTypes.doubleType;
-			} else if (HomebrewOrmDataTypes.longType.equals(text)) {
+			} else if (text.equalsIgnoreCase(longType.value)) {
 				return HomebrewOrmDataTypes.longType;
-			} else if (HomebrewOrmDataTypes.shortType.equals(text)) {
+			} else if (text.equalsIgnoreCase(shortType.value)) {
 				return HomebrewOrmDataTypes.shortType;
-			}else if (HomebrewOrmDataTypes.booleanType.equals(text)) {
+			}else if (text.equalsIgnoreCase(booleanType.value)) {
 				return HomebrewOrmDataTypes.booleanType;
-			}else if (HomebrewOrmDataTypes.charType.equals(text)) {
+			}else if (text.equalsIgnoreCase(charType.value)) {
 				return HomebrewOrmDataTypes.charType;
-			}else if (HomebrewOrmDataTypes.floatType.equals(text)) {
+			}else if (text.equalsIgnoreCase(floatType.value)) {
 				return HomebrewOrmDataTypes.floatType;
 			}
 		}
