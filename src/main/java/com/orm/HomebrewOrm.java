@@ -11,21 +11,25 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class HomebrewOrm {
-	
-	public ArrayList<String> listeTransactions;
-	public ArrayList<HomebrewOrmTable> listeTables;
 
 	private String databasePath;
+	
+	
 	private ArrayList<Map<String, Object>> datas;
-	private ArrayList<Map<String, Object>> tables;
+	public ArrayList<HomebrewOrmTable> listeTables;
+	public ArrayList<String> listeTransactions;
+	
+	
 	private final String DATA_DIR_NAME = "/data";
 	private final String TABLE_DIR_NAME = "/tables";
+	
 	private static HomebrewOrm instance = null;	
 	
 	private HomebrewOrm() {
 		String path = loadConfiguration();
 		listeTransactions = new ArrayList<String>();
 		listeTables = new ArrayList<HomebrewOrmTable>();
+		datas = new ArrayList<Map<String,Object>>();
 		if(path != null) {
 			this.databasePath = path;
 		}
@@ -137,18 +141,32 @@ public class HomebrewOrm {
 	}
 	private void loadTables() {
 		ObjectMapper mapper = new ObjectMapper();
-		File dataDir = new File(this.databasePath + TABLE_DIR_NAME);
-		String[] tableFiles = dataDir.list();
-		System.out.println(tableFiles.length);
-		for(String file : tableFiles) {
-			try {
-				tables.add(mapper.readValue(new File(dataDir + "/" + file), Map.class));
-			} catch (JsonParseException e) {
-				e.printStackTrace();
-			} catch (JsonMappingException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
+		File tableDir = new File(this.databasePath + TABLE_DIR_NAME);
+		String[] tableFiles = tableDir.list();
+		if(tableFiles != null) {
+			for(String file : tableFiles) {
+				try {
+					Map<String,Object> table = mapper.readValue(new File(tableDir + "/" + file), Map.class);
+					String tableName = (String) table.get("name");
+					ArrayList<Map<String, Object>> values = (ArrayList<Map<String, Object>>) table.get("values");
+					HomebrewOrmTable homebrewOrmTable = new HomebrewOrmTable();
+					homebrewOrmTable.setTableName(tableName);
+					
+					for(Map<String, Object> value : values) {
+						String columnName = (String) value.get("columnName");
+						HomebrewOrmDataTypes type =  HomebrewOrmDataTypes.fromString((String)value.get("type"));
+						HomebrewOrmTableValue homebrewOrmTableValue = new HomebrewOrmTableValue(columnName, type);
+						homebrewOrmTable.addValue(homebrewOrmTableValue);
+					}
+					
+					listeTables.add(homebrewOrmTable);
+				} catch (JsonParseException e) {
+					e.printStackTrace();
+				} catch (JsonMappingException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -173,8 +191,5 @@ public class HomebrewOrm {
 			e.printStackTrace();
 		}
 		return configurationPath;
-	}
-	public static void main(String[] args) {
-		HomebrewOrm homebrewOrm = HomebrewOrm.getInstance();
 	}
 }
