@@ -58,9 +58,10 @@ public class HomebrewOrm {
 		return flag;
 	}
 	
-	public void updateData(HashMap<String, String> collumnsToUpdate, 
+	public void updateData(String tableName,
+						   HashMap<String, String> collumnsToUpdate, 
 						   HashMap<String, String> where) {
-		String transaction = "update;{";
+		String transaction = "update;"+tableName+"{";
 		for(Map.Entry<String, String> collumn : collumnsToUpdate.entrySet()) {
 			transaction+=collumn.getKey()+":"+collumn.getValue()+",";
 		}
@@ -72,11 +73,12 @@ public class HomebrewOrm {
 		listeTransactions.add(transaction);
 	}
 	
-	public void updateTable(String table, String collumn, HomebrewOrmDataTypes type) {
-		listeTransactions.add("updateTable;"+table+";"+collumn+";"+type+";");
+	public void updateTable() {
+
 	}
 	
-	public void deleteValue() {
+	public void deleteValue(String tableName,
+							HashMap<String, String> where) {
 		
 	}
 	
