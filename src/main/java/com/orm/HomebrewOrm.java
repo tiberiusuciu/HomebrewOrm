@@ -6,16 +6,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 public class HomebrewOrm {
 
 	private String databasePath;
 	
 	
-	private ArrayList<Map<String, Object>> datas;
+	private Map<String, Map<String, Object>> datas;
 	public ArrayList<HomebrewOrmTable> listeTables;
 	public ArrayList<String> listeTransactions;
 	
@@ -29,7 +32,7 @@ public class HomebrewOrm {
 		String path = loadConfiguration();
 		listeTransactions = new ArrayList<String>();
 		listeTables = new ArrayList<HomebrewOrmTable>();
-		datas = new ArrayList<Map<String,Object>>();
+		datas = new HashMap<String, Map<String,Object>>();
 		if(path != null) {
 			this.databasePath = path;
 		}
@@ -128,7 +131,7 @@ public class HomebrewOrm {
 		for(String file : dataFiles) {
 			if(file.equals(dataToLoad)){
 				try {
-					datas.add(mapper.readValue(new File(dataDir + "/" + file), Map.class));
+					datas.put(file, mapper.readValue(new File(dataDir + "/" + file), Map.class));
 				} catch (JsonParseException e) {
 					e.printStackTrace();
 				} catch (JsonMappingException e) {
@@ -139,9 +142,25 @@ public class HomebrewOrm {
 			}
 		}
 	}
-	
-	private void writeData() {
-		
+	@SuppressWarnings("unchecked")
+	private void writeTransaction() {
+		ObjectMapper mapper = new ObjectMapper();
+		File dataDir = new File(this.databasePath + DATA_DIR_NAME);
+		for(HomebrewOrmTable homebrewOrmTable : listeTables) {
+			String file = homebrewOrmTable.getTableName();
+			((Map<String, Object>)datas.get(file + ".json")).put("age", "30");
+			ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
+			try {
+				writer.writeValue(new File(dataDir + "/" + file + ".json"), datas.get(file + ".json"));
+			} catch (JsonGenerationException e) {
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			datas.get(1);
+		}
 	}
 	
 	private boolean tableExists(HomebrewOrmTable tableTofind){
@@ -189,8 +208,22 @@ public class HomebrewOrm {
 		}
 	}
 	
-	private void writeTables() {
-		
+	private void writeTable(String tableName) {
+		ObjectMapper mapper = new ObjectMapper();
+		for(HomebrewOrmTable homebrewOrmTable : listeTables) {
+			if(homebrewOrmTable.getTableName().equals(tableName)) {
+				File tableDir = new File(this.databasePath + TABLE_DIR_NAME);
+				try {
+					mapper.writeValue(new File(tableDir + "/" + homebrewOrmTable.getTableName() + ".json"), homebrewOrmTable);
+				} catch (JsonGenerationException e) {
+					e.printStackTrace();
+				} catch (JsonMappingException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	private String loadConfiguration() {
