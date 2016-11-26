@@ -37,8 +37,6 @@ public class HomebrewOrm {
 		if(path != null) {
 			this.databasePath = path;
 		}
-		loadTable("anothertest.json");
-		loadTable("another.json");
 	}
 	
 	public static HomebrewOrm getInstance() {
@@ -175,6 +173,7 @@ public class HomebrewOrm {
 	}
 	
 	private void loadTable(String tableToLoad) {
+		tableToLoad += ".json";
 		ObjectMapper mapper = new ObjectMapper();
 		File tableDir = new File(this.databasePath + TABLE_DIR_NAME);
 		String[] tableFiles = tableDir.list();
