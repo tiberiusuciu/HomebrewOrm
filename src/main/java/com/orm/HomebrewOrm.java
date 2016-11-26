@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.example.ExampleUser;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
@@ -53,6 +54,16 @@ public class HomebrewOrm {
 	public boolean createTable (HomebrewOrmTable table) {
 		boolean flag = false;
 		if(!tableExists(table)){
+			boolean hasId = false;
+			for(HomebrewOrmTableValue hormV: table.getValues()) {
+				if (hormV.getColumnName().equals("_id") && hormV.getType().equals(HomebrewOrmDataTypes.integerType.value)) {
+					hasId = true;
+					break;
+				}
+			}
+			if(!hasId) {
+				table.addValue(new HomebrewOrmTableValue("_id", HomebrewOrmDataTypes.integerType.value));
+			}
 			listeTables.add(table);
 			writeTable(table.getTableName());
 			flag = true;
@@ -242,5 +253,16 @@ public class HomebrewOrm {
 			e.printStackTrace();
 		}
 		return configurationPath;
+	}
+	
+	public static void main(String[] args) {
+		ExampleUser exampleUser = new ExampleUser("jd", "rondeau", 911);
+		HomebrewOrmTable table = new HomebrewOrmTable();
+		table.setTableName("exampleUser");
+		table.addValue(new HomebrewOrmTableValue("firstName", HomebrewOrmDataTypes.stringType.value));
+		table.addValue(new HomebrewOrmTableValue("lastName", HomebrewOrmDataTypes.stringType.value));
+		table.addValue(new HomebrewOrmTableValue("telephoneNumber", HomebrewOrmDataTypes.integerType.value));
+		HomebrewOrm.getInstance().createTable(table);
+		System.out.println(HomebrewOrm.getInstance().listeTables);
 	}
 }

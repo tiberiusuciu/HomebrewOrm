@@ -1,0 +1,19 @@
+{
+  "tableName" : "exampleUser",
+  "values" : [ {
+    "columnName" : "firstName",
+    "type" : "string"
+  }, {
+    "columnName" : "lastName",
+    "type" : "string"
+  }, {
+    "columnName" : "telephoneNumber",
+    "type" : "integer"
+  }, {
+    "columnName" : "_id",
+    "type" : "string"
+  }, {
+    "columnName" : "_id",
+    "type" : "integer"
+  } ]
+}

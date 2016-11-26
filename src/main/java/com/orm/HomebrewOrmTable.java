@@ -6,7 +6,7 @@ import java.util.List;
 public class HomebrewOrmTable {
 	private String tableName;
 	private List<HomebrewOrmTableValue> values;
-	
+
 	public HomebrewOrmTable() {
 		tableName = "";
 		values = new ArrayList<HomebrewOrmTableValue>();
