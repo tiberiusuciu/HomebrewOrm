@@ -56,7 +56,7 @@ public class HomebrewOrm {
 		boolean flag = false;
 		if(!tableExists(table)){
 			listeTables.add(table);
-			//todo insert into file
+			writeTable(table.getTableName());
 			flag = true;
 		}
 		return flag;
