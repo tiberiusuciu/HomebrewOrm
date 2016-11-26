@@ -48,12 +48,12 @@ public class HomebrewOrm {
 	}
 	
 	public void insert(HomebrewOrmObject object, String tableName) {
-		listeTransactions.add("insert;"+object.toHomebrewOrmData()+";into "+ tableName);
+		listeTransactions.add("insert;"+object.toHomebrewOrmData()+";"+ tableName);
 	}
 	
 	public boolean createTable (HomebrewOrmTable table) {
 		boolean flag = false;
-		if(!tableExists(table)){
+		if(!tableExists(table.getTableName())){
 			boolean hasId = false;
 			for(HomebrewOrmTableValue hormV: table.getValues()) {
 				if (hormV.getColumnName().equals("_id") && hormV.getType().equals(HomebrewOrmDataTypes.integerType.value)) {
@@ -78,7 +78,7 @@ public class HomebrewOrm {
 		for(Map.Entry<String, String> collumn : collumnsToUpdate.entrySet()) {
 			transaction+=collumn.getKey()+":"+collumn.getValue()+",";
 		}
-		transaction+="};where{";
+		transaction+="};{";
 		for(Map.Entry<String, String> whereValue : where.entrySet()) {
 			transaction+=whereValue.getKey()+":"+whereValue.getValue()+",";
 		}
@@ -92,7 +92,7 @@ public class HomebrewOrm {
 	
 	public void deleteValue(String tableName,
 							HashMap<String, String> where) {
-		String transaction = "deleteValue;"+tableName+"where{";
+		String transaction = "deleteValue;"+tableName+";{";
 		for(Map.Entry<String, String> whereValue : where.entrySet()) {
 			transaction+=whereValue.getKey()+":"+whereValue.getValue()+",";
 		}
@@ -102,7 +102,7 @@ public class HomebrewOrm {
 	
 	public void removeValue(String tableName,
 			HashMap<String, String> where) {
-		String transaction = "removeValue;"+tableName+"where{";
+		String transaction = "removeValue;"+tableName+";{";
 		for(Map.Entry<String, String> whereValue : where.entrySet()) {
 			transaction+=whereValue.getKey()+":"+whereValue.getValue()+",";
 		}
@@ -115,7 +115,130 @@ public class HomebrewOrm {
 	}
 	
 	public void commit() {
-		
+		System.out.println(verifyTransactions());
+	}
+
+	private boolean verifyTransactions() {
+		boolean flag = true;
+		for (String transaction: listeTransactions) {
+			String[] transactionInfos = transaction.split(";");
+			switch (transactionInfos[0]) {
+			case "insert":
+				if(!verifyInsertion(transactionInfos)){
+					return false;
+				}
+				break;
+			case "update":
+				break;
+			case "deleteValue":
+				break;
+			case "removeValue":
+				break;
+			default:
+				break;
+			}
+		}
+		return flag;
+	}
+
+	private boolean verifyInsertion(String[] transactionInfos) {
+		boolean flag = true;
+		if(tableExists(transactionInfos[2])){
+			//find table with tableName
+			HomebrewOrmTable table = findTable(transactionInfos[2]);
+			//seperate all collumns
+			String[] valueToInsert = transactionInfos[1].split(",");
+			for(int i = 0; i < valueToInsert.length;i++){
+				//seperate collums and values
+				String[] columnValue = valueToInsert[i].split(":");
+				//verify if all tables are legit
+				if(!columnValue[0].equals(table.getValues().get(i).getColumnName())){
+					flag = false;
+					break;
+				}
+				else{
+					if(!verifyType(table.getValues().get(i).getType(), columnValue[1])){
+						flag = false;
+						break;
+					}
+				}
+			}
+		}
+		else{
+			flag = false;
+		}
+		return flag;
+	}
+
+	private boolean verifyType(String tableType, String value){
+		boolean flag = true;
+		if(tableType.equals(HomebrewOrmDataTypes.booleanType.value)){
+			if(!Boolean.parseBoolean(value)){
+				flag = false;
+			}
+		}
+		else if(tableType.equals(HomebrewOrmDataTypes.charType.value)){
+			if(value.length() != 1){
+				flag = false;
+			}
+		}
+		else if(tableType.equals(HomebrewOrmDataTypes.integerType.value)){
+			try { 
+		        Integer.parseInt(value); 
+		    } catch(NumberFormatException e) { 
+		        return false; 
+		    } catch(NullPointerException e) {
+		        return false;
+		    }
+		}
+		else if(tableType.equals(HomebrewOrmDataTypes.doubleType.value)){
+			try { 
+		        Double.parseDouble(value); 
+		    } catch(NumberFormatException e) { 
+		        return false; 
+		    } catch(NullPointerException e) {
+		        return false;
+		    }
+		}
+		else if(tableType.equals(HomebrewOrmDataTypes.floatType.value)){
+			try { 
+		        Float.parseFloat(value); 
+		    } catch(NumberFormatException e) { 
+		        return false; 
+		    } catch(NullPointerException e) {
+		        return false;
+		    }
+		}
+		else if(tableType.equals(HomebrewOrmDataTypes.longType.value)){
+			try { 
+		        Long.parseLong(value); 
+		    } catch(NumberFormatException e) { 
+		        return false; 
+		    } catch(NullPointerException e) {
+		        return false;
+		    }
+		}
+		else if(tableType.equals(HomebrewOrmDataTypes.shortType.value)){
+			try { 
+		        Short.parseShort(value); 
+		    } catch(NumberFormatException e) { 
+		        return false; 
+		    } catch(NullPointerException e) {
+		        return false;
+		    }
+		}
+		return flag;
+	}
+	
+	private HomebrewOrmTable findTable(String tableName) {
+		HomebrewOrmTable table = null;
+		for(HomebrewOrmTable tables: listeTables){
+			if(tables.getTableName().equals(tableName)){
+				table = tables;
+				break;
+			}
+		}
+		return table;
 	}
 	
 	public void select() {
@@ -172,10 +295,10 @@ public class HomebrewOrm {
 		}
 	}
 	
-	private boolean tableExists(HomebrewOrmTable tableTofind){
+	private boolean tableExists(String tableTofind){
 		boolean flag = false;
 		for(HomebrewOrmTable table: listeTables){
-			if(table.getTableName().equals(tableTofind.getTableName())){
+			if(table.getTableName().equals(tableTofind)){
 				flag = true;
 				break;
 			}
@@ -264,5 +387,7 @@ public class HomebrewOrm {
 		table.addValue(new HomebrewOrmTableValue("telephoneNumber", HomebrewOrmDataTypes.integerType.value));
 		HomebrewOrm.getInstance().createTable(table);
 		System.out.println(HomebrewOrm.getInstance().listeTables);
+		HomebrewOrm.getInstance().insert(exampleUser, "exampleUser");
+		HomebrewOrm.getInstance().commit();
 	}
 }
