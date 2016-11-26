@@ -3,9 +3,9 @@ package com.orm;
 public class HomebrewOrmTableValue {
 
 	public String columnName;
-	public HomebrewOrmDataTypes type;
+	public String type;
 	
-	public HomebrewOrmTableValue(String columnName, HomebrewOrmDataTypes type) {
+	public HomebrewOrmTableValue(String columnName, String type) {
 		super();
 		this.columnName = columnName;
 		this.type = type;
@@ -19,11 +19,11 @@ public class HomebrewOrmTableValue {
 		this.columnName = columnName;
 	}
 
-	public HomebrewOrmDataTypes getType() {
+	public String getType() {
 		return type;
 	}
 
-	public void setType(HomebrewOrmDataTypes type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 

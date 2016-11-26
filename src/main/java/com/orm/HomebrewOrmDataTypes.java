@@ -13,24 +13,24 @@ public enum HomebrewOrmDataTypes {
 		return value;
 	}
 
-	public static HomebrewOrmDataTypes fromString(String text) {
+	public static String fromString(String text) {
 		if (text != null) {
-			if (text.equalsIgnoreCase(stringType.getValueString())) {
-				return HomebrewOrmDataTypes.stringType;
-			} else if (text.equalsIgnoreCase(integerType.getValueString())) {
-				return HomebrewOrmDataTypes.integerType;
-			} else if (text.equalsIgnoreCase(doubleType.getValueString())) {
-				return HomebrewOrmDataTypes.doubleType;
-			} else if (text.equalsIgnoreCase(longType.getValueString())) {
-				return HomebrewOrmDataTypes.longType;
-			} else if (text.equalsIgnoreCase(shortType.getValueString())) {
-				return HomebrewOrmDataTypes.shortType;
-			}else if (text.equalsIgnoreCase(booleanType.getValueString())) {
-				return HomebrewOrmDataTypes.booleanType;
-			}else if (text.equalsIgnoreCase(charType.getValueString())) {
-				return HomebrewOrmDataTypes.charType;
-			}else if (text.equalsIgnoreCase(floatType.getValueString())) {
-				return HomebrewOrmDataTypes.floatType;
+			if (text.equalsIgnoreCase(stringType.value)) {
+				return HomebrewOrmDataTypes.stringType.value;
+			} else if (text.equalsIgnoreCase(integerType.value)) {
+				return HomebrewOrmDataTypes.integerType.value;
+			} else if (text.equalsIgnoreCase(doubleType.value)) {
+				return HomebrewOrmDataTypes.doubleType.value;
+			} else if (text.equalsIgnoreCase(longType.value)) {
+				return HomebrewOrmDataTypes.longType.value;
+			} else if (text.equalsIgnoreCase(shortType.value)) {
+				return HomebrewOrmDataTypes.shortType.value;
+			}else if (text.equalsIgnoreCase(booleanType.value)) {
+				return HomebrewOrmDataTypes.booleanType.value;
+			}else if (text.equalsIgnoreCase(charType.value)) {
+				return HomebrewOrmDataTypes.charType.value;
+			}else if (text.equalsIgnoreCase(floatType.value)) {
+				return HomebrewOrmDataTypes.floatType.value;
 			}
 		}
 		return null;

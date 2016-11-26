@@ -2,6 +2,7 @@ package com.orm;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -159,7 +160,6 @@ public class HomebrewOrm {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			datas.get(1);
 		}
 	}
 	
@@ -173,6 +173,7 @@ public class HomebrewOrm {
 		}
 		return flag;
 	}
+	
 	private void loadTable(String tableToLoad) {
 		ObjectMapper mapper = new ObjectMapper();
 		File tableDir = new File(this.databasePath + TABLE_DIR_NAME);
@@ -182,18 +183,17 @@ public class HomebrewOrm {
 				if(file.equals(tableToLoad)) {
 					try {
 						Map<String,Object> table = mapper.readValue(new File(tableDir + "/" + file), Map.class);
-						String tableName = (String) table.get("name");
+						String tableName = (String) table.get("tableName");
 						ArrayList<Map<String, Object>> values = (ArrayList<Map<String, Object>>) table.get("values");
 						HomebrewOrmTable homebrewOrmTable = new HomebrewOrmTable();
 						homebrewOrmTable.setTableName(tableName);
 						
 						for(Map<String, Object> value : values) {
 							String columnName = (String) value.get("columnName");
-							HomebrewOrmDataTypes type =  HomebrewOrmDataTypes.fromString((String)value.get("type"));
+							String type =  HomebrewOrmDataTypes.fromString((String)value.get("type"));
 							HomebrewOrmTableValue homebrewOrmTableValue = new HomebrewOrmTableValue(columnName, type);
 							homebrewOrmTable.addValue(homebrewOrmTableValue);
 						}
-						
 						listeTables.add(homebrewOrmTable);
 						loadData(tableToLoad);
 					} catch (JsonParseException e) {
@@ -213,8 +213,9 @@ public class HomebrewOrm {
 		for(HomebrewOrmTable homebrewOrmTable : listeTables) {
 			if(homebrewOrmTable.getTableName().equals(tableName)) {
 				File tableDir = new File(this.databasePath + TABLE_DIR_NAME);
-				try {
-					mapper.writeValue(new File(tableDir + "/" + homebrewOrmTable.getTableName() + ".json"), homebrewOrmTable);
+				try {					
+					ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
+					writer.writeValue(new File(tableDir + "/" + homebrewOrmTable.getTableName() + ".json"), homebrewOrmTable);
 				} catch (JsonGenerationException e) {
 					e.printStackTrace();
 				} catch (JsonMappingException e) {
