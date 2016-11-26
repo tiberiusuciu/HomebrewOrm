@@ -15,7 +15,7 @@ public class ExampleUser implements HomebrewOrmObject {
 	}
 	
 	public String toHomebrewOrmData() {
-		return "{'firstName':'"+firstName+"', 'lastName':'"+lastName+
-				"', 'telephoneNumber':'"+telephoneNumber+"'}";
+		return "firstName:"+firstName+",lastName:"+lastName+
+				",telephoneNumber:"+telephoneNumber;
 	}
 }
