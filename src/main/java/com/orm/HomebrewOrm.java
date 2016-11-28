@@ -392,7 +392,25 @@ public class HomebrewOrm {
 	}
 	
 	private void insertTransaction(String[] transactionInfos){
-		
+		Map<String, Object> tableData = datas.get(transactionInfos[2]);
+		HomebrewOrmTable table = new HomebrewOrmTable();
+		/*String[] rows = transactionInfos[1].split(",");
+		for (String row : rows) {
+			String[] columValue = row.split(":");
+			table.addValue(new HomebrewOrmTableValue(columnName, type));
+		}*/
+		tableData.put(findBiggestId(tableData)+1+"", transactionInfos[1]);
+	}
+	
+	private int findBiggestId(Map<String, Object> map){
+		int flag = 0;
+		for (Entry<String, Object> entry : map.entrySet())
+		{
+		   if(flag < Integer.parseInt(entry.getKey())){
+			   flag = Integer.parseInt(entry.getKey());
+		   }
+		}
+		return flag;
 	}
 	
 	public void select() {
