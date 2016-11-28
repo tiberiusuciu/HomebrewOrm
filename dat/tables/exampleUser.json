@@ -11,9 +11,6 @@
     "type" : "integer"
   }, {
     "columnName" : "_id",
-    "type" : "string"
-  }, {
-    "columnName" : "_id",
     "type" : "integer"
   } ]
 }
