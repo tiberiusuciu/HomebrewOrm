@@ -21,10 +21,10 @@ public class Main {
 		HashMap<String, String> columnToUpdate = new HashMap<>();
 		columnToUpdate.put("firstName", "jean-Daniel");
 		HashMap<String, String> where = new HashMap<>();
-		where.put("firstName", "jd");
+		where.put("_id", "3");
 		//HomebrewOrm.getInstance().updateData("exampleUser", columnToUpdate, where);
 		//HomebrewOrm.getInstance().deleteValue("exampleUser", where);
-		//HomebrewOrm.getInstance().removeValue("exampleUser", where);
+		HomebrewOrm.getInstance().removeValue("exampleUser", where);
 		System.out.println(HomebrewOrm.getInstance().commit());
 		
 	}
