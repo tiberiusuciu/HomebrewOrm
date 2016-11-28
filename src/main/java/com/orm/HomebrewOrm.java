@@ -502,4 +502,16 @@ public class HomebrewOrm {
 		}
 		return configurationPath;
 	}
+	
+	public static void main(String[] args) {
+		ExampleUser exampleUser = new ExampleUser("jd", "rondeau", 911);
+		HomebrewOrmTable table = new HomebrewOrmTable();
+		table.setTableName("exampleUser");
+		table.addValue(new HomebrewOrmTableValue("firstName", HomebrewOrmDataTypes.stringType.value));
+		table.addValue(new HomebrewOrmTableValue("lastName", HomebrewOrmDataTypes.stringType.value));
+		table.addValue(new HomebrewOrmTableValue("telephoneNumber", HomebrewOrmDataTypes.integerType.value));
+		HomebrewOrm.getInstance().createTable(table);
+		HomebrewOrm.getInstance().insert(exampleUser, "exampleUser");
+		HomebrewOrm.getInstance().commit();
+	}
 }
