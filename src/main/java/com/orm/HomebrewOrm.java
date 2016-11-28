@@ -55,14 +55,22 @@ public class HomebrewOrm {
 		boolean flag = false;
 		if(!tableExists(table.getTableName())){
 			boolean hasId = false;
+			boolean hasDelete = false;
 			for(HomebrewOrmTableValue hormV: table.getValues()) {
 				if (hormV.getColumnName().equals("_id") && hormV.getType().equals(HomebrewOrmDataTypes.integerType.value)) {
 					hasId = true;
 					break;
 				}
+				if (hormV.getColumnName().equals("isDeleted") && hormV.getType().equals(HomebrewOrmDataTypes.booleanType.value)) {
+					hasDelete = true;
+					break;
+				}
 			}
 			if(!hasId) {
 				table.addValue(new HomebrewOrmTableValue("_id", HomebrewOrmDataTypes.integerType.value));
+			}
+			if(!hasDelete) {
+				table.addValue(new HomebrewOrmTableValue("isDeleted", HomebrewOrmDataTypes.booleanType.value));
 			}
 			listeTables.add(table);
 			writeTable(table.getTableName());
@@ -88,6 +96,10 @@ public class HomebrewOrm {
 	
 	public void updateTable() {
 
+	}
+	
+	private void deleteValueTransaction(String[] transactionInfos) {
+		
 	}
 	
 	public void deleteValue(String tableName,
@@ -172,6 +184,7 @@ public class HomebrewOrm {
 			case "update":
 				break;
 			case "deleteValue":
+				deleteValueTransaction(transactionInfos);
 				break;
 			case "removeValue":
 				break;
@@ -452,6 +465,7 @@ public class HomebrewOrm {
 		String[] tableFiles = tableDir.list();
 		if(tableFiles != null) {
 			for(String file : tableFiles) {
+				System.out.println(file);
 				if(file.equals(tableToLoad)) {
 					try {
 						Map<String,Object> table = mapper.readValue(new File(tableDir + "/" + file), Map.class);

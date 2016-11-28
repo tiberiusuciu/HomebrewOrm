@@ -12,5 +12,8 @@
   }, {
     "columnName" : "_id",
     "type" : "integer"
+  }, {
+    "columnName" : "isDeleted",
+    "type" : "boolean"
   } ]
 }
