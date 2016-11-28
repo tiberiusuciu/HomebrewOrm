@@ -16,7 +16,7 @@ public class Main {
 		table.addValue(new HomebrewOrmTableValue("lastName", HomebrewOrmDataTypes.stringType.getValueString()));
 		table.addValue(new HomebrewOrmTableValue("telephoneNumber", HomebrewOrmDataTypes.integerType.getValueString()));
 		HomebrewOrm.getInstance().createTable(table);
-		System.out.println(HomebrewOrm.getInstance().listeTables);
+		//System.out.println(HomebrewOrm.getInstance().listeTables);
 		HomebrewOrm.getInstance().insert(exampleUser, "exampleUser");
 		HashMap<String, String> columnToUpdate = new HashMap<>();
 		columnToUpdate.put("firstName", "jean-Daniel");
@@ -26,5 +26,6 @@ public class Main {
 		HomebrewOrm.getInstance().deleteValue("exampleUser", where);
 		HomebrewOrm.getInstance().removeValue("exampleUser", where);
 		System.out.println(HomebrewOrm.getInstance().commit());
+		
 	}
 }
