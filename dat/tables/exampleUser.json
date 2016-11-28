@@ -9,14 +9,8 @@
   }, {
     "columnName" : "telephoneNumber",
     "type" : "integer"
-<<<<<<< d902aff4bb216a1f6a1efe71c459bf40e268311a
-  }, {
-    "columnName" : "_id",
-    "type" : "string"
   }, {
     "columnName" : "_id",
     "type" : "integer"
-=======
->>>>>>> ajout de la fonction verifyInsert
   } ]
 }
