@@ -142,6 +142,7 @@ public class HomebrewOrm {
 			loadData(homebrewOrmTable.getTableName());
 		}
 	}
+	
 	private boolean verifyTransactions() {
 		boolean flag = true;
 		for (String transaction: listeTransactions) {
@@ -410,13 +411,14 @@ public class HomebrewOrm {
 	}
 	
 	private void loadData(String dataToLoad) {
+		String dataFileName = dataToLoad + ".json";
 		ObjectMapper mapper = new ObjectMapper();
 		File dataDir = new File(this.databasePath + DATA_DIR_NAME);
 		String[] dataFiles = dataDir.list();
 		for(String file : dataFiles) {
-			if(file.equals(dataToLoad)){
+			if(file.equals(dataFileName)){
 				try {
-					datas.put(file, mapper.readValue(new File(dataDir + "/" + file), Map.class));
+					datas.put(dataToLoad, mapper.readValue(new File(dataDir + "/" + file), Map.class));
 				} catch (JsonParseException e) {
 					e.printStackTrace();
 				} catch (JsonMappingException e) {
@@ -427,6 +429,7 @@ public class HomebrewOrm {
 			}
 		}
 	}
+	
 	@SuppressWarnings("unchecked")
 	private void writeTransaction() {
 		ObjectMapper mapper = new ObjectMapper();
@@ -459,14 +462,14 @@ public class HomebrewOrm {
 	}
 	
 	private void loadTable(String tableToLoad) {
-		tableToLoad += ".json";
+		String tableFileName = tableToLoad + ".json";
 		ObjectMapper mapper = new ObjectMapper();
 		File tableDir = new File(this.databasePath + TABLE_DIR_NAME);
 		String[] tableFiles = tableDir.list();
 		if(tableFiles != null) {
 			for(String file : tableFiles) {
 				System.out.println(file);
-				if(file.equals(tableToLoad)) {
+				if(file.equals(tableFileName)) {
 					try {
 						Map<String,Object> table = mapper.readValue(new File(tableDir + "/" + file), Map.class);
 						String tableName = (String) table.get("tableName");
@@ -532,6 +535,7 @@ public class HomebrewOrm {
 	}
 	
 	public static void main(String[] args) {
+		/*
 		ExampleUser exampleUser = new ExampleUser("jd", "rondeau", 911);
 		HomebrewOrmTable table = new HomebrewOrmTable();
 		table.setTableName("exampleUser");
@@ -541,5 +545,9 @@ public class HomebrewOrm {
 		HomebrewOrm.getInstance().createTable(table);
 		HomebrewOrm.getInstance().insert(exampleUser, "exampleUser");
 		HomebrewOrm.getInstance().commit();
+		*/
+		HomebrewOrm homebrewOrm = new HomebrewOrm();
+		homebrewOrm.loadTable("exampleUser");
+		System.out.println(homebrewOrm.datas);
 	}
 }
