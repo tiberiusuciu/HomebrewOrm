@@ -233,10 +233,18 @@ public class HomebrewOrm {
 				deleteValueTransaction(transactionInfos);
 				break;
 			case "removeValue":
+				removeValueTransaction(transactionInfos);
 				break;
 			default:
 				break;
 			}
+		}
+	}
+	
+	private void removeValueTransaction(String[] transactionInfos){
+		HashMap<String, ArrayList<Map<String, Object>>> whereReturn = where(transactionInfos[1], transactionInfos[2]);
+		for (Entry<String, ArrayList<Map<String, Object>>> entry : whereReturn.entrySet()){
+			datas.get(transactionInfos[1]).remove(entry.getKey());
 		}
 	}
 
