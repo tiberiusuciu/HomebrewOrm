@@ -24,6 +24,7 @@ public class Main {
 		where.put("firstName", "jd");
 		HomebrewOrm.getInstance().updateData("exampleUser", columnToUpdate, where);
 		HomebrewOrm.getInstance().deleteValue("exampleUser", where);
+		HomebrewOrm.getInstance().removeValue("exampleUser", where);
 		System.out.println(HomebrewOrm.getInstance().commit());
 	}
 }

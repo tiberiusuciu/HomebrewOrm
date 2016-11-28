@@ -115,6 +115,7 @@ public class HomebrewOrm {
 	public boolean commit() {
 		boolean flag = false;
 		if(verifyTransactions()){
+			loadTablesRequired();
 			executeTransactions();
 			flag = true;
 		}
@@ -124,6 +125,11 @@ public class HomebrewOrm {
 		return flag;
 	}
 
+	private void loadTablesRequired(){
+		for (HomebrewOrmTable homebrewOrmTable : listeTables) {
+			loadData(homebrewOrmTable.getTableName());
+		}
+	}
 	private boolean verifyTransactions() {
 		boolean flag = true;
 		for (String transaction: listeTransactions) {
@@ -161,6 +167,7 @@ public class HomebrewOrm {
 			String[] transactionInfos = transaction.split(";");
 			switch (transactionInfos[0]) {
 			case "insert":
+				insertTransaction(transactionInfos);
 				break;
 			case "update":
 				break;
@@ -176,6 +183,7 @@ public class HomebrewOrm {
 
 	private boolean verifyInsertion(String[] transactionInfos) {
 		boolean flag = true;
+		loadTable(transactionInfos[2]);
 		if(tableExists(transactionInfos[2])){
 			//find table with tableName
 			HomebrewOrmTable table = findTable(transactionInfos[2]);
@@ -265,6 +273,7 @@ public class HomebrewOrm {
 	
 	private boolean verifyUpdate(String[] transactionInfos){
 		boolean flag = true;
+		loadTable(transactionInfos[1]);
 		if(tableExists(transactionInfos[1])){
 			//find table with tableName
 			HomebrewOrmTable table = findTable(transactionInfos[1]);
@@ -326,6 +335,7 @@ public class HomebrewOrm {
 	
 	private boolean verifyDeleteRemoveValue(String[] transactionInfos){
 		boolean flag = true;
+		loadTable(transactionInfos[1]);
 		if(tableExists(transactionInfos[1])){
 			//find table with tableName
 			HomebrewOrmTable table = findTable(transactionInfos[1]);
@@ -364,6 +374,10 @@ public class HomebrewOrm {
 			}
 		}
 		return table;
+	}
+	
+	private void insertTransaction(String[] transactionInfos){
+		
 	}
 	
 	public void select() {
