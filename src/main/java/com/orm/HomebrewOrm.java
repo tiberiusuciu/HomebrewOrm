@@ -74,15 +74,15 @@ public class HomebrewOrm {
 	public void updateData(String tableName,
 						   HashMap<String, String> collumnsToUpdate, 
 						   HashMap<String, String> where) {
-		String transaction = "update;"+tableName+"{";
+		String transaction = "update;"+tableName+";";
 		for(Map.Entry<String, String> collumn : collumnsToUpdate.entrySet()) {
 			transaction+=collumn.getKey()+":"+collumn.getValue()+",";
 		}
-		transaction+="};{";
+		transaction+=";";
 		for(Map.Entry<String, String> whereValue : where.entrySet()) {
 			transaction+=whereValue.getKey()+":"+whereValue.getValue()+",";
 		}
-		transaction+="}";
+		transaction+="";
 		listeTransactions.add(transaction);
 	}
 	
@@ -92,21 +92,19 @@ public class HomebrewOrm {
 	
 	public void deleteValue(String tableName,
 							HashMap<String, String> where) {
-		String transaction = "deleteValue;"+tableName+";{";
+		String transaction = "deleteValue;"+tableName+";";
 		for(Map.Entry<String, String> whereValue : where.entrySet()) {
 			transaction+=whereValue.getKey()+":"+whereValue.getValue()+",";
 		}
-		transaction+="}";
 		listeTransactions.add(transaction);
 	}
 	
 	public void removeValue(String tableName,
 			HashMap<String, String> where) {
-		String transaction = "removeValue;"+tableName+";{";
+		String transaction = "removeValue;"+tableName+";";
 		for(Map.Entry<String, String> whereValue : where.entrySet()) {
 			transaction+=whereValue.getKey()+":"+whereValue.getValue()+",";
 		}
-		transaction+="}";
 		listeTransactions.add(transaction);
 	}
 	
@@ -129,6 +127,9 @@ public class HomebrewOrm {
 				}
 				break;
 			case "update":
+				if(!verifyUpdate(transactionInfos)){
+					return false;
+				}
 				break;
 			case "deleteValue":
 				break;
@@ -227,6 +228,67 @@ public class HomebrewOrm {
 		        return false;
 		    }
 		}
+		return flag;
+	}
+	
+	private boolean verifyUpdate(String[] transactionInfos){
+		boolean flag = true;
+		if(tableExists(transactionInfos[1])){
+			//find table with tableName
+			HomebrewOrmTable table = findTable(transactionInfos[1]);
+			//seperate all collumns
+			String[] valueToUpdate = transactionInfos[2].split(",");
+			for(int i = 0; i < valueToUpdate.length;i++){
+				//seperate collums and values
+				String[] columnValue = valueToUpdate[i].split(":");
+				//verify if all column are legit
+				String columnType =  findColumnType(table, columnValue[0]);
+				if(columnType == null){
+					flag = false;
+					break;
+				}
+				else{
+					if(!verifyType(columnType, columnValue[1])){
+						flag = false;
+						break;
+					}
+				}
+			}
+			if(flag!=false){
+				String[] valueOfWhere = transactionInfos[3].split(",");
+				for(int i = 0; i < valueOfWhere.length;i++){
+					//seperate collums and values
+					String[] columnValue = valueOfWhere[i].split(":");
+					//verify if all column are legit
+					String columnType =  findColumnType(table, columnValue[0]);
+					if(columnType == null){
+						flag = false;
+						break;
+					}
+					else{
+						if(!verifyType(columnType, columnValue[1])){
+							flag = false;
+							break;
+						}
+					}
+				}
+			}
+		}
+		else{
+			flag = false;
+		}
+		return flag;
+	}
+	
+	private String findColumnType(HomebrewOrmTable table, String columnName){
+		String flag = null;
+		for (HomebrewOrmTableValue value : table.getValues()) {
+			if(columnName.equals(value.getColumnName())){
+				flag = value.getType();
+				break;
+			}
+		}
+		
 		return flag;
 	}
 	
@@ -376,18 +438,5 @@ public class HomebrewOrm {
 			e.printStackTrace();
 		}
 		return configurationPath;
-	}
-	
-	public static void main(String[] args) {
-		ExampleUser exampleUser = new ExampleUser("jd", "rondeau", 911);
-		HomebrewOrmTable table = new HomebrewOrmTable();
-		table.setTableName("exampleUser");
-		table.addValue(new HomebrewOrmTableValue("firstName", HomebrewOrmDataTypes.stringType.value));
-		table.addValue(new HomebrewOrmTableValue("lastName", HomebrewOrmDataTypes.stringType.value));
-		table.addValue(new HomebrewOrmTableValue("telephoneNumber", HomebrewOrmDataTypes.integerType.value));
-		HomebrewOrm.getInstance().createTable(table);
-		System.out.println(HomebrewOrm.getInstance().listeTables);
-		HomebrewOrm.getInstance().insert(exampleUser, "exampleUser");
-		HomebrewOrm.getInstance().commit();
 	}
 }
