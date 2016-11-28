@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -130,6 +131,7 @@ public class HomebrewOrm {
 		if(verifyTransactions()){
 			loadTablesRequired();
 			executeTransactions();
+			writeData();
 			flag = true;
 		}
 		else{
@@ -392,7 +394,41 @@ public class HomebrewOrm {
 	}
 	
 	private void insertTransaction(String[] transactionInfos){
+		Map<String, Object> tableData = datas.get(transactionInfos[2]);
+		List<Map<String, String>> listeColumnValue = new ArrayList<>();
+		String[] rows = transactionInfos[1].split(",");
+		Boolean _idExist = false;
+		for (String row : rows) {
+			String[] columValue = row.split(":");
+			Map<String, String> map = new HashMap<>();
+			map.put(columValue[0], columValue[1]);
+			listeColumnValue.add(map);
+			if(columValue[0].equals("_id")){
+				_idExist = true;
+			}
+		}
+		if(!_idExist){
+			Map<String, String> _id = new HashMap<>();
+			_id.put("_id",findBiggestId(tableData)+1+"");
+			listeColumnValue.add(_id);
+		}
 		
+		Map<String, String> isDeleted = new HashMap<>();
+		isDeleted.put("isDeleted","false");
+		listeColumnValue.add(isDeleted);
+		
+		tableData.put(findBiggestId(tableData)+1+"", listeColumnValue);
+	}
+	
+	private int findBiggestId(Map<String, Object> map){
+		int flag = 0;
+		for (Entry<String, Object> entry : map.entrySet())
+		{
+		   if(flag < Integer.parseInt(entry.getKey())){
+			   flag = Integer.parseInt(entry.getKey());
+		   }
+		}
+		return flag;
 	}
 	
 	public void select() {
@@ -469,7 +505,6 @@ public class HomebrewOrm {
 		String[] tableFiles = tableDir.list();
 		if(tableFiles != null) {
 			for(String file : tableFiles) {
-				System.out.println(file);
 				if(file.equals(tableFileName)) {
 					try {
 						Map<String,Object> table = mapper.readValue(new File(tableDir + "/" + file), Map.class);
@@ -519,26 +554,14 @@ public class HomebrewOrm {
 	
 	private void writeData() {
 		ObjectMapper mapper = new ObjectMapper();
-		File dataDir = new File(this.databasePath + TABLE_DIR_NAME);
+		File dataDir = new File(this.databasePath + DATA_DIR_NAME);
 		ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
 		for(HomebrewOrmTable ormTable : listeTables) {
 			try {
-				writer.writeValue(new File(dataDir + "/" + ormTable.getTableName() + ".json"), ormTable);
+				writer.writeValue(new File(dataDir + "/" + ormTable.getTableName() + ".json"), datas.get(ormTable.getTableName()));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			/**
-			 * TODO
-			 * FIX
-			 * DATE
-			 * FROM
-			 * HOTFIX
-			 * PATCH
-			 * TOSCREW
-			for (Entry<String, Object> entry: datas.get(ormTable.getTableName()).entrySet()) {
-				
-			}
-			**/
 		}
 	}
 	
