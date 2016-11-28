@@ -58,11 +58,11 @@ public class HomebrewOrm {
 			boolean hasId = false;
 			boolean hasDelete = false;
 			for(HomebrewOrmTableValue hormV: table.getValues()) {
-				if (hormV.getColumnName().equals("_id") && hormV.getType().equals(HomebrewOrmDataTypes.integerType.value)) {
+				if (hormV.getColumnName().equals("_id")) {
 					hasId = true;
 					break;
 				}
-				if (hormV.getColumnName().equals("isDeleted") && hormV.getType().equals(HomebrewOrmDataTypes.booleanType.value)) {
+				if (hormV.getColumnName().equals("isDeleted")) {
 					hasDelete = true;
 					break;
 				}
