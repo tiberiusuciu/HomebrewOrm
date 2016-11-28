@@ -102,7 +102,14 @@ public class HomebrewOrm {
 	
 	private void deleteValueTransaction(String[] transactionInfos) {
 		String[] conditions = transactionInfos[2].split(",");
-		System.out.println(where(transactionInfos[1], transactionInfos[2]));
+		HashMap<String, ArrayList<Map<String, Object>>> map = where(transactionInfos[1], transactionInfos[2]);
+		for(Entry<String, ArrayList<Map<String, Object>>> entry : map.entrySet()){
+			for(Map<String, Object> property : map.get(entry.getKey())) {
+				System.out.println(property);
+				property.replace("isDeleted", "true");
+			}
+		}
+		System.out.println(datas);
 	}
 	
 	private HashMap<String, ArrayList<Map<String, Object>>> where(String tableName, String conditions) {
