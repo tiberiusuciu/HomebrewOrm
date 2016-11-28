@@ -6,6 +6,7 @@ import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.example.ExampleUser;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -516,6 +517,31 @@ public class HomebrewOrm {
 		}
 	}
 	
+	private void writeData() {
+		ObjectMapper mapper = new ObjectMapper();
+		File dataDir = new File(this.databasePath + TABLE_DIR_NAME);
+		ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
+		for(HomebrewOrmTable ormTable : listeTables) {
+			try {
+				writer.writeValue(new File(dataDir + "/" + ormTable.getTableName() + ".json"), ormTable);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			/**
+			 * TODO
+			 * FIX
+			 * DATE
+			 * FROM
+			 * HOTFIX
+			 * PATCH
+			 * TOSCREW
+			for (Entry<String, Object> entry: datas.get(ormTable.getTableName()).entrySet()) {
+				
+			}
+			**/
+		}
+	}
+	
 	private String loadConfiguration() {
 		ObjectMapper mapper = new ObjectMapper();
 		String configurationPath = null;
@@ -548,6 +574,6 @@ public class HomebrewOrm {
 		*/
 		HomebrewOrm homebrewOrm = new HomebrewOrm();
 		homebrewOrm.loadTable("exampleUser");
-		System.out.println(homebrewOrm.datas);
+		//homebrewOrm.writeData();
 	}
 }
