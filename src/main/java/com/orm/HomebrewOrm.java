@@ -112,8 +112,16 @@ public class HomebrewOrm {
 		
 	}
 	
-	public void commit() {
-		System.out.println(verifyTransactions());
+	public boolean commit() {
+		boolean flag = false;
+		if(verifyTransactions()){
+			executeTransactions();
+			flag = true;
+		}
+		else{
+			flag = false;
+		}
+		return flag;
 	}
 
 	private boolean verifyTransactions() {
@@ -132,6 +140,31 @@ public class HomebrewOrm {
 				}
 				break;
 			case "deleteValue":
+				if(!verifyDeleteRemoveValue(transactionInfos)){
+					return false;
+				}
+				break;
+			case "removeValue":
+				if(!verifyDeleteRemoveValue(transactionInfos)){
+					return false;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+		return flag;
+	}
+	
+	private void executeTransactions() {
+		for (String transaction: listeTransactions) {
+			String[] transactionInfos = transaction.split(";");
+			switch (transactionInfos[0]) {
+			case "insert":
+				break;
+			case "update":
+				break;
+			case "deleteValue":
 				break;
 			case "removeValue":
 				break;
@@ -139,7 +172,6 @@ public class HomebrewOrm {
 				break;
 			}
 		}
-		return flag;
 	}
 
 	private boolean verifyInsertion(String[] transactionInfos) {
@@ -287,6 +319,37 @@ public class HomebrewOrm {
 				flag = value.getType();
 				break;
 			}
+		}
+		
+		return flag;
+	}
+	
+	private boolean verifyDeleteRemoveValue(String[] transactionInfos){
+		boolean flag = true;
+		if(tableExists(transactionInfos[1])){
+			//find table with tableName
+			HomebrewOrmTable table = findTable(transactionInfos[1]);
+			//seperate all collumns
+			String[] valueToDelete = transactionInfos[2].split(",");
+			for(int i = 0; i < valueToDelete.length;i++){
+				//seperate collums and values
+				String[] columnValue = valueToDelete[i].split(":");
+				//verify if all column are legit
+				String columnType =  findColumnType(table, columnValue[0]);
+				if(columnType == null){
+					flag = false;
+					break;
+				}
+				else{
+					if(!verifyType(columnType, columnValue[1])){
+						flag = false;
+						break;
+					}
+				}
+			}
+		}
+		else{
+			flag = false;
 		}
 		
 		return flag;
