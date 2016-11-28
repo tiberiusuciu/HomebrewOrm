@@ -22,9 +22,9 @@ public class Main {
 		columnToUpdate.put("firstName", "jean-Daniel");
 		HashMap<String, String> where = new HashMap<>();
 		where.put("firstName", "jd");
-		HomebrewOrm.getInstance().updateData("exampleUser", columnToUpdate, where);
-		HomebrewOrm.getInstance().deleteValue("exampleUser", where);
-		HomebrewOrm.getInstance().removeValue("exampleUser", where);
+		//HomebrewOrm.getInstance().updateData("exampleUser", columnToUpdate, where);
+		//HomebrewOrm.getInstance().deleteValue("exampleUser", where);
+		//HomebrewOrm.getInstance().removeValue("exampleUser", where);
 		System.out.println(HomebrewOrm.getInstance().commit());
 		
 	}
