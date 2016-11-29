@@ -105,11 +105,9 @@ public class HomebrewOrm {
 		HashMap<String, ArrayList<Map<String, Object>>> map = where(transactionInfos[1], transactionInfos[2]);
 		for(Entry<String, ArrayList<Map<String, Object>>> entry : map.entrySet()){
 			for(Map<String, Object> property : map.get(entry.getKey())) {
-				System.out.println(property);
 				property.replace("isDeleted", "true");
 			}
 		}
-		System.out.println(datas);
 	}
 	
 	private HashMap<String, ArrayList<Map<String, Object>>> where(String tableName, String conditions) {
@@ -228,6 +226,7 @@ public class HomebrewOrm {
 				insertTransaction(transactionInfos);
 				break;
 			case "update":
+				updateTransaction(transactionInfos);
 				break;
 			case "deleteValue":
 				deleteValueTransaction(transactionInfos);
@@ -237,6 +236,20 @@ public class HomebrewOrm {
 				break;
 			default:
 				break;
+			}
+		}
+	}
+	
+	private void updateTransaction(String[] transactionInfos){
+		String[] conditions = transactionInfos[3].split(",");
+		HashMap<String, ArrayList<Map<String, Object>>> map = where(transactionInfos[1], transactionInfos[3]);
+		for(Entry<String, ArrayList<Map<String, Object>>> entry : map.entrySet()){
+			for(Map<String, Object> property : map.get(entry.getKey())) {
+				String[] updateCondition =  transactionInfos[2].split(",");
+				for(int i = 0; i < updateCondition.length;i++){
+					String[] updateColumnValue = updateCondition[i].split(":");
+					property.replace(updateColumnValue[0], updateColumnValue[1]);
+				}
 			}
 		}
 	}
