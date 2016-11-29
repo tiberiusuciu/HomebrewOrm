@@ -58,6 +58,7 @@ public class HomebrewOrm {
 	
 	public boolean createTable (HomebrewOrmTable table) {
 		boolean flag = false;
+		loadTable(table.getTableName());
 		if(!tableExists(table.getTableName())){
 			boolean hasId = false;
 			boolean hasDelete = false;
@@ -109,15 +110,19 @@ public class HomebrewOrm {
 						trouve = true;
 						homebrewOrmListTableValue.setType(homebrewOrmTableValueParametre.getType());
 						alterTable(tableName, homebrewOrmTableValueParametre.getColumnName(), value);
-						
 					}
 				}
 				if(!trouve){
 					findTable(tableName).addValue(homebrewOrmTableValueParametre);
+					for (Entry<String, Object> entry : datas.get(tableName).entrySet()){
+					    ArrayList<Object> values = (ArrayList<Object>) entry.getValue();
+					    Map map = new HashMap<>();
+					    map.put(homebrewOrmTableValueParametre.columnName, value);
+					    values.add(map);
+					}
 				}
 			}
 		}
-		System.out.println(listeTables.get(0).getValues() +"jd is the best jd of all the jd");
 		writeTable(tableName);
 		writeData();
 	}
@@ -560,8 +565,16 @@ public class HomebrewOrm {
 		return map;
 	}
 	
-	public void oneToOne() {
-		
+	public void oneToOne(String mostImportantTableName, String lesserImportantTableName) {
+		loadTable(mostImportantTableName);
+		loadTable(lesserImportantTableName);
+		if(tableExists(mostImportantTableName) && tableExists(lesserImportantTableName)){
+			ArrayList<HomebrewOrmTableValue> homebrewOrmTableValues = new ArrayList<>();
+			HomebrewOrmTableValue oneToOneLink = new HomebrewOrmTableValue("_"+mostImportantTableName,
+													HomebrewOrmDataTypes.integerType.getValueString());
+			homebrewOrmTableValues.add(oneToOneLink);
+			updateTable(lesserImportantTableName, homebrewOrmTableValues, "null");
+		}
 	}
 	
 	public void oneToMany() {
@@ -624,34 +637,36 @@ public class HomebrewOrm {
 	}
 	
 	private void loadTable(String tableToLoad) {
-		String tableFileName = tableToLoad + ".json";
-		ObjectMapper mapper = new ObjectMapper();
-		File tableDir = new File(this.databasePath + TABLE_DIR_NAME);
-		String[] tableFiles = tableDir.list();
-		if(tableFiles != null) {
-			for(String file : tableFiles) {
-				if(file.equals(tableFileName)) {
-					try {
-						Map<String,Object> table = mapper.readValue(new File(tableDir + "/" + file), Map.class);
-						String tableName = (String) table.get("tableName");
-						ArrayList<Map<String, Object>> values = (ArrayList<Map<String, Object>>) table.get("values");
-						HomebrewOrmTable homebrewOrmTable = new HomebrewOrmTable();
-						homebrewOrmTable.setTableName(tableName);
-						
-						for(Map<String, Object> value : values) {
-							String columnName = (String) value.get("columnName");
-							String type =  HomebrewOrmDataTypes.fromString((String)value.get("type"));
-							HomebrewOrmTableValue homebrewOrmTableValue = new HomebrewOrmTableValue(columnName, type);
-							homebrewOrmTable.addValue(homebrewOrmTableValue);
+		if(!tableExists(tableToLoad)){
+			String tableFileName = tableToLoad + ".json";
+			ObjectMapper mapper = new ObjectMapper();
+			File tableDir = new File(this.databasePath + TABLE_DIR_NAME);
+			String[] tableFiles = tableDir.list();
+			if(tableFiles != null) {
+				for(String file : tableFiles) {
+					if(file.equals(tableFileName)) {
+						try {
+							Map<String,Object> table = mapper.readValue(new File(tableDir + "/" + file), Map.class);
+							String tableName = (String) table.get("tableName");
+							ArrayList<Map<String, Object>> values = (ArrayList<Map<String, Object>>) table.get("values");
+							HomebrewOrmTable homebrewOrmTable = new HomebrewOrmTable();
+							homebrewOrmTable.setTableName(tableName);
+							
+							for(Map<String, Object> value : values) {
+								String columnName = (String) value.get("columnName");
+								String type =  HomebrewOrmDataTypes.fromString((String)value.get("type"));
+								HomebrewOrmTableValue homebrewOrmTableValue = new HomebrewOrmTableValue(columnName, type);
+								homebrewOrmTable.addValue(homebrewOrmTableValue);
+							}
+							listeTables.add(homebrewOrmTable);
+							loadData(tableToLoad);
+						} catch (JsonParseException e) {
+							e.printStackTrace();
+						} catch (JsonMappingException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
 						}
-						listeTables.add(homebrewOrmTable);
-						loadData(tableToLoad);
-					} catch (JsonParseException e) {
-						e.printStackTrace();
-					} catch (JsonMappingException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
 					}
 				}
 			}

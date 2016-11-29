@@ -30,8 +30,9 @@ public class Main {
 		HomebrewOrm.getInstance().removeTable("anothertest");
 		HomebrewOrm.getInstance().alterTable("exampleUser", "telephoneNumber", "911");
 		ArrayList<HomebrewOrmTableValue> listeValues = new ArrayList<>();
-		listeValues.add(new HomebrewOrmTableValue("firstName", HomebrewOrmDataTypes.integerType.getValueString()));
+		listeValues.add(new HomebrewOrmTableValue("test", HomebrewOrmDataTypes.integerType.getValueString()));
 		
-		HomebrewOrm.getInstance().updateTable("exampleUser", listeValues, "1000");
+		//HomebrewOrm.getInstance().updateTable("exampleUser", listeValues, "1000");
+		HomebrewOrm.getInstance().oneToOne("exampleUser", "exampleUser");
 	}
 }
