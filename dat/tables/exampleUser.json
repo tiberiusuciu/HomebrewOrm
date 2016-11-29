@@ -2,7 +2,7 @@
   "tableName" : "exampleUser",
   "values" : [ {
     "columnName" : "firstName",
-    "type" : "integer"
+    "type" : "string"
   }, {
     "columnName" : "lastName",
     "type" : "string"
@@ -15,5 +15,8 @@
   }, {
     "columnName" : "isDeleted",
     "type" : "boolean"
+  }, {
+    "columnName" : "test",
+    "type" : "integer"
   } ]
 }

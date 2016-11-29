@@ -114,6 +114,12 @@ public class HomebrewOrm {
 				}
 				if(!trouve){
 					findTable(tableName).addValue(homebrewOrmTableValueParametre);
+					for (Entry<String, Object> entry : datas.get(tableName).entrySet()){
+					    ArrayList<Object> values = (ArrayList<Object>) entry.getValue();
+					    Map map = new HashMap<>();
+					    map.put(homebrewOrmTableValueParametre.columnName, value);
+					    values.add(map);
+					}
 				}
 			}
 		}
