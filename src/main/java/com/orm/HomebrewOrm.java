@@ -117,7 +117,6 @@ public class HomebrewOrm {
 				}
 			}
 		}
-		System.out.println(listeTables.get(0).getValues() +"jd is the best jd of all the jd");
 		writeTable(tableName);
 		writeData();
 	}
