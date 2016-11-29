@@ -99,8 +99,44 @@ public class HomebrewOrm {
 		listeTransactions.add(transaction);
 	}
 	
-	public void updateTable() {
-
+	public void updateTable(String tableName, List<HomebrewOrmTableValue> listeValues, String value) {
+		loadTable(tableName);
+		if(tableExists(tableName)){
+			for (HomebrewOrmTableValue homebrewOrmTableValueParametre : listeValues) {
+				boolean trouve = false;
+				for (HomebrewOrmTableValue homebrewOrmListTableValue : findTable(tableName).getValues()) {
+					if(homebrewOrmTableValueParametre.getColumnName().equals(homebrewOrmListTableValue.getColumnName())){
+						trouve = true;
+						homebrewOrmListTableValue.setType(homebrewOrmTableValueParametre.getType());
+						alterTable(tableName, homebrewOrmTableValueParametre.getColumnName(), value);
+						
+					}
+				}
+				if(!trouve){
+					findTable(tableName).addValue(homebrewOrmTableValueParametre);
+				}
+			}
+		}
+		System.out.println(listeTables.get(0).getValues() +"jd is the best jd of all the jd");
+		writeTable(tableName);
+		writeData();
+	}
+	
+	public void alterTable(String tableName, String columnName, String value){
+		loadTable(tableName);
+		HashMap<String, ArrayList<Map<String, Object>>> where= where(tableName, "");
+		for(Entry<String, ArrayList<Map<String, Object>>> entry : where.entrySet()){
+			for(Map<String, Object> property : where.get(entry.getKey())) {
+				for(HomebrewOrmTableValue collumnValue: findTable(tableName).getValues()){
+					if(collumnValue.getColumnName().equals(columnName)){
+						if(verifyType(collumnValue.getType(), value)){
+							property.replace(columnName, value);
+						}
+					}
+				}
+			}
+		}
+		writeData();
 	}
 	
 	private void deleteValueTransaction(String[] transactionInfos) {
@@ -624,20 +660,17 @@ public class HomebrewOrm {
 	
 	private void writeTable(String tableName) {
 		ObjectMapper mapper = new ObjectMapper();
-		for(HomebrewOrmTable homebrewOrmTable : listeTables) {
-			if(homebrewOrmTable.getTableName().equals(tableName)) {
-				File tableDir = new File(this.databasePath + TABLE_DIR_NAME);
-				try {					
-					ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
-					writer.writeValue(new File(tableDir + "/" + homebrewOrmTable.getTableName() + ".json"), homebrewOrmTable);
-				} catch (JsonGenerationException e) {
-					e.printStackTrace();
-				} catch (JsonMappingException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+		HomebrewOrmTable homebrewOrmTable = findTable(tableName);
+		File tableDir = new File(this.databasePath + TABLE_DIR_NAME);
+		try {					
+			ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
+			writer.writeValue(new File(tableDir + "/" + homebrewOrmTable.getTableName() + ".json"), homebrewOrmTable);
+		} catch (JsonGenerationException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -708,8 +741,8 @@ public class HomebrewOrm {
 		return newMap;
 	}
 	*/
-	public static void main(String[] args) {
-		/*
+	/*public static void main(String[] args) {
+		
 		ExampleUser exampleUser = new ExampleUser("jd", "rondeau", 911);
 		HomebrewOrmTable table = new HomebrewOrmTable();
 		table.setTableName("exampleUser");
@@ -719,7 +752,7 @@ public class HomebrewOrm {
 		HomebrewOrm.getInstance().createTable(table);
 		HomebrewOrm.getInstance().insert(exampleUser, "exampleUser");
 		HomebrewOrm.getInstance().commit();
-		*/
+		
 		HomebrewOrm homebrewOrm = new HomebrewOrm();
 		homebrewOrm.loadTable("exampleUser");
 		HashMap<String, String> where = new HashMap<>();
@@ -731,5 +764,5 @@ public class HomebrewOrm {
 		homebrewOrm.pretty(homebrewOrm.select("exampleUser", null));
 		System.out.println(homebrewOrm.select("exampleUser", null).size());
 		//homebrewOrm.writeData();
-	}
+	}*/
 }

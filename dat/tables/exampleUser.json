@@ -2,7 +2,7 @@
   "tableName" : "exampleUser",
   "values" : [ {
     "columnName" : "firstName",
-    "type" : "string"
+    "type" : "integer"
   }, {
     "columnName" : "lastName",
     "type" : "string"

@@ -1,5 +1,6 @@
 package com.example;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.orm.HomebrewOrm;
@@ -27,6 +28,10 @@ public class Main {
 		//HomebrewOrm.getInstance().removeValue("exampleUser", where);
 		System.out.println(HomebrewOrm.getInstance().commit());
 		HomebrewOrm.getInstance().removeTable("anothertest");
+		HomebrewOrm.getInstance().alterTable("exampleUser", "telephoneNumber", "911");
+		ArrayList<HomebrewOrmTableValue> listeValues = new ArrayList<>();
+		listeValues.add(new HomebrewOrmTableValue("firstName", HomebrewOrmDataTypes.integerType.getValueString()));
 		
+		HomebrewOrm.getInstance().updateTable("exampleUser", listeValues, "1000");
 	}
 }
