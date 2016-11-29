@@ -27,6 +27,6 @@ public class Main {
 		//HomebrewOrm.getInstance().removeValue("exampleUser", where);
 		System.out.println(HomebrewOrm.getInstance().commit());
 		HomebrewOrm.getInstance().removeTable("anothertest");
-		
+		HomebrewOrm.getInstance().alterTable("exampleUser", "telephoneNumber", "911");
 	}
 }

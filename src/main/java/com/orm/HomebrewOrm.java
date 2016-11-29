@@ -99,8 +99,28 @@ public class HomebrewOrm {
 		listeTransactions.add(transaction);
 	}
 	
-	public void updateTable() {
-
+	public void updateTable(String tableName, List<HomebrewOrmTableValue> listeValues) {
+		loadTable(tableName);
+		if(tableExists(tableName)){
+			//akshka
+		}
+	}
+	
+	public void alterTable(String tableName, String columnName, String value){
+		loadTable(tableName);
+		HashMap<String, ArrayList<Map<String, Object>>> where= where(tableName, "");
+		for(Entry<String, ArrayList<Map<String, Object>>> entry : where.entrySet()){
+			for(Map<String, Object> property : where.get(entry.getKey())) {
+				for(HomebrewOrmTableValue collumnValue: findTable(tableName).getValues()){
+					if(collumnValue.getColumnName().equals(columnName)){
+						if(verifyType(collumnValue.getType(), value)){
+							property.replace(columnName, value);
+						}
+					}
+				}
+			}
+		}
+		writeData();
 	}
 	
 	private void deleteValueTransaction(String[] transactionInfos) {
