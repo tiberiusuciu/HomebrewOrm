@@ -672,6 +672,17 @@ public class HomebrewOrm {
 		return configurationPath;
 	}
 	
+	
+	public void pretty(HashMap<String, ArrayList<Map<String, Object>>> map) {
+		for(Entry<String, ArrayList<Map<String, Object>>> entry : map.entrySet()) {
+			System.out.println(entry.getKey() + ": [");
+			for(Map<String, Object> props : entry.getValue()) {
+				System.out.println("    " + props + ", ");
+			}
+			System.out.println("],");
+		}
+	}
+	
 	public static void main(String[] args) {
 		/*
 		ExampleUser exampleUser = new ExampleUser("jd", "rondeau", 911);
@@ -692,7 +703,7 @@ public class HomebrewOrm {
 		//where.put("lastName", "Soares");
 		//homebrewOrm.deleteValue("exampleUser", where);
 		//homebrewOrm.commit();
-		System.out.println(homebrewOrm.select("exampleUser", null));
+		homebrewOrm.pretty(homebrewOrm.select("exampleUser", null));
 		System.out.println(homebrewOrm.select("exampleUser", null).size());
 		//homebrewOrm.writeData();
 	}
