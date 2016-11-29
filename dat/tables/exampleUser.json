@@ -16,7 +16,7 @@
     "columnName" : "isDeleted",
     "type" : "boolean"
   }, {
-    "columnName" : "test",
+    "columnName" : "_exampleUser",
     "type" : "integer"
   } ]
 }
