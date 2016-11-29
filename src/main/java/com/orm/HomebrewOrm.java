@@ -675,14 +675,39 @@ public class HomebrewOrm {
 	
 	public void pretty(HashMap<String, ArrayList<Map<String, Object>>> map) {
 		for(Entry<String, ArrayList<Map<String, Object>>> entry : map.entrySet()) {
-			System.out.println(entry.getKey() + ": [");
+			System.out.println("{" + entry.getKey() + ": [");
 			for(Map<String, Object> props : entry.getValue()) {
 				System.out.println("    " + props + ", ");
 			}
-			System.out.println("],");
+			System.out.println("]},");
 		}
 	}
-	
+	/*
+	public HashMap<String, ArrayList<Map<String, Object>>> sort(HashMap<String, ArrayList<Map<String, Object>>> map) {
+		HashMap<String, ArrayList<Map<String, Object>>> newMap = new HashMap<String, ArrayList<Map<String, Object>>>();
+		ArrayList<Integer> keys = new ArrayList<Integer>();
+		for(Entry<String, ArrayList<Map<String, Object>>> entry : map.entrySet()) {
+			keys.add(Integer.parseInt(entry.getKey()));
+		}
+		boolean flag = true;
+		int tmp;
+	    while (flag){
+	    	flag= false;
+	    	for(int i = 0; i < keys.size() - 1; i++) {
+				 if(keys.get(i) < keys.get(i+1)) {
+					 tmp = keys.get(i);
+					 keys.set(i, keys.get(i + 1));
+					 keys.set(i + 1, tmp);
+					 flag = true;
+				 }
+			}
+	    }
+	    for(int i = 0; i < keys.size() - 1; i++) {
+			 newMap.put(keys.get(i) + "", map.get(keys.get(i)));
+		}
+		return newMap;
+	}
+	*/
 	public static void main(String[] args) {
 		/*
 		ExampleUser exampleUser = new ExampleUser("jd", "rondeau", 911);
