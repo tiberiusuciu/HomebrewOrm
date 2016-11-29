@@ -101,7 +101,6 @@ public class HomebrewOrm {
 	}
 	
 	private void deleteValueTransaction(String[] transactionInfos) {
-		String[] conditions = transactionInfos[2].split(",");
 		HashMap<String, ArrayList<Map<String, Object>>> map = where(transactionInfos[1], transactionInfos[2]);
 		for(Entry<String, ArrayList<Map<String, Object>>> entry : map.entrySet()){
 			for(Map<String, Object> property : map.get(entry.getKey())) {
@@ -111,35 +110,42 @@ public class HomebrewOrm {
 	}
 	
 	private HashMap<String, ArrayList<Map<String, Object>>> where(String tableName, String conditions) {
-		String[] filtres = conditions.split(",");
 		HashMap<String, ArrayList<Map<String,Object>>> result = new HashMap<String, ArrayList<Map<String,Object>>>();
-		HashMap<String, Object> dataToFilter = (HashMap<String, Object>) datas.get(tableName);
-		String[] key = new String[filtres.length];
-		String[] value = new String[filtres.length];
-		for(int i = 0; i < filtres.length; i++){
-			//seperate collums and values
-			String[] columnValue = filtres[i].split(":");
-			key[i] = columnValue[0];
-			value[i] = columnValue[1];
+		if(conditions.indexOf(',') < 0) {
+			for(Entry<String, Object> iterator : datas.get(tableName).entrySet()) {
+				result.put(iterator.getKey(), (ArrayList<Map<String, Object>>) iterator.getValue());
+			}
 		}
-		for(Entry<String, Object> entry : dataToFilter.entrySet()) {
-			ArrayList<Map<String, String>> entryProps = (ArrayList<Map<String, String>>) entry.getValue();
-			boolean trouve = true;
-			for(Map<String, String> prop : entryProps) {
-				for(Entry<String, String> columnValue : prop.entrySet()){
-					for(int i = 0; i < filtres.length; i++) {
-						if(columnValue.getKey().equals(key[i])) {
-							if(!columnValue.getValue().equals(value[i])) {
-								trouve = false;
-								break;
+		else {
+			String[] filtres = conditions.split(",");
+			HashMap<String, Object> dataToFilter = (HashMap<String, Object>) datas.get(tableName);
+			String[] key = new String[filtres.length];
+			String[] value = new String[filtres.length];
+			for(int i = 0; i < filtres.length; i++){
+				//seperate collums and values
+				String[] columnValue = filtres[i].split(":");
+				key[i] = columnValue[0];
+				value[i] = columnValue[1];
+			}
+			for(Entry<String, Object> entry : dataToFilter.entrySet()) {
+				ArrayList<Map<String, String>> entryProps = (ArrayList<Map<String, String>>) entry.getValue();
+				boolean trouve = true;
+				for(Map<String, String> prop : entryProps) {
+					for(Entry<String, String> columnValue : prop.entrySet()){
+						for(int i = 0; i < filtres.length; i++) {
+							if(columnValue.getKey().equals(key[i])) {
+								if(!columnValue.getValue().equals(value[i])) {
+									trouve = false;
+									break;
+								}
 							}
 						}
 					}
 				}
-			}
-			if(trouve) {
-				result.put(entry.getKey(), (ArrayList<Map<String, Object>>) entry.getValue());
-			}
+				if(trouve) {
+					result.put(entry.getKey(), (ArrayList<Map<String, Object>>) entry.getValue());
+				}
+			}	
 		}
 		return result;
 	}
@@ -494,8 +500,21 @@ public class HomebrewOrm {
 		return flag;
 	}
 	
-	public void select() {
-		
+	public HashMap<String, ArrayList<Map<String, Object>>> select(String tableName, HashMap<String, String> where) {
+		loadTable(tableName);
+		HashMap<String, ArrayList<Map<String, Object>>> map;
+		if(where != null) {
+			String transaction = "select;"+tableName+";";
+			for(Map.Entry<String, String> whereValue : where.entrySet()) {
+				transaction+=whereValue.getKey()+":"+whereValue.getValue()+",";
+			}
+			String conditions = transaction.split(";")[2];
+			map = where(tableName, conditions);
+		}
+		else {
+			map = where(tableName, "");
+		}
+		return map;
 	}
 	
 	public void oneToOne() {
@@ -661,10 +680,13 @@ public class HomebrewOrm {
 		HomebrewOrm homebrewOrm = new HomebrewOrm();
 		homebrewOrm.loadTable("exampleUser");
 		HashMap<String, String> where = new HashMap<>();
-		where.put("firstName", "Tiberiu Cristian");
-		where.put("lastName", "Soares");
-		homebrewOrm.deleteValue("exampleUser", where);
-		homebrewOrm.commit();
+		//where.put("blabla", "shiet");
+		//where.put("firstName", "Tiberiu Cristian");
+		//where.put("lastName", "Soares");
+		//homebrewOrm.deleteValue("exampleUser", where);
+		//homebrewOrm.commit();
+		System.out.println(homebrewOrm.select("exampleUser", null));
+		System.out.println(homebrewOrm.select("exampleUser", null).size());
 		//homebrewOrm.writeData();
 	}
 }
