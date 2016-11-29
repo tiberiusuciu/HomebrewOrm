@@ -3,6 +3,8 @@ package com.orm;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.ElementType;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,11 +31,12 @@ public class HomebrewOrm {
 	
 	private final String DATA_DIR_NAME = "/data";
 	private final String TABLE_DIR_NAME = "/tables";
-	
+	private static String path = "";
 	private static HomebrewOrm instance = null;	
 	
+	
 	private HomebrewOrm() {
-		String path = loadConfiguration();
+		path = loadConfiguration();
 		listeTransactions = new ArrayList<String>();
 		listeTables = new ArrayList<HomebrewOrmTable>();
 		datas = new HashMap<String, Map<String,Object>>();
@@ -162,8 +165,12 @@ public class HomebrewOrm {
 		listeTransactions.add(transaction);
 	}
 	
-	public void removeTable() {
+	public void removeTable(String tableName) {
+		File fileTable = new File(path+TABLE_DIR_NAME+"/"+tableName+".json");
+		fileTable.delete();
 		
+		File fileData = new File(path+DATA_DIR_NAME+"/"+tableName+".json");
+		fileData.delete();
 	}
 	
 	public boolean commit() {
