@@ -577,8 +577,8 @@ public class HomebrewOrm {
 		}
 	}
 	
-	public void oneToMany() {
-		
+	public void oneToMany(String mostImportantTableName, String lesserImportantTableName) {
+		oneToOne(mostImportantTableName, lesserImportantTableName);
 	}
 	
 	public void manyToMany() {
