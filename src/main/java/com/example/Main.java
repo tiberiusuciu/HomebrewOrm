@@ -33,6 +33,6 @@ public class Main {
 		listeValues.add(new HomebrewOrmTableValue("test", HomebrewOrmDataTypes.integerType.getValueString()));
 		
 		//HomebrewOrm.getInstance().updateTable("exampleUser", listeValues, "1000");
-		HomebrewOrm.getInstance().oneToMany("exampleUser", "exampleUser");
+		HomebrewOrm.getInstance().manyToMany("exampleUser", "exampleUser");
 	}
 }
