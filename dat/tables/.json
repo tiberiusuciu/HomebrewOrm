@@ -1,0 +1,16 @@
+{
+  "tableName" : "",
+  "values" : [ {
+    "columnName" : "_exampleUserid",
+    "type" : "integer"
+  }, {
+    "columnName" : "_exampleUserid",
+    "type" : "integer"
+  }, {
+    "columnName" : "_id",
+    "type" : "integer"
+  }, {
+    "columnName" : "isDeleted",
+    "type" : "boolean"
+  } ]
+}

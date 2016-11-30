@@ -80,6 +80,8 @@ public class HomebrewOrm {
 			}
 			listeTables.add(table);
 			writeTable(table.getTableName());
+			datas.put(table.getTableName(), new HashMap<String, Object>());
+			writeData();
 			flag = true;
 		}
 		return flag;
@@ -581,8 +583,18 @@ public class HomebrewOrm {
 		oneToOne(mostImportantTableName, lesserImportantTableName);
 	}
 	
-	public void manyToMany() {
-		
+	public void manyToMany(String tableName1, String tableName2) {
+		loadTable(tableName1);
+		loadTable(tableName2);
+		if(tableExists(tableName1) && tableExists(tableName2)){
+			HomebrewOrmTable table = new HomebrewOrmTable();
+			table.setTableName(tableName1+tableName2.substring(0, 1).toUpperCase()+tableName2.substring(1));
+			HomebrewOrmTableValue column1 = new HomebrewOrmTableValue("_"+tableName1+"id", HomebrewOrmDataTypes.integerType.getValueString());
+			HomebrewOrmTableValue column2 = new HomebrewOrmTableValue("_"+tableName2+"id", HomebrewOrmDataTypes.integerType.getValueString());
+			table.addValue(column1);
+			table.addValue(column2);
+			createTable(table);
+		}
 	}
 	
 	private void loadData(String dataToLoad) {
