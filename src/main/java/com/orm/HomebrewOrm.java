@@ -196,6 +196,34 @@ public class HomebrewOrm {
 		return result;
 	}
 	
+	private ArrayList<String> where2(String tableName, String conditions){
+		ArrayList<String> where = new ArrayList<>();
+		String[] columnValueArray = conditions.split(",");
+		if(conditions.indexOf(',') < 0) {
+			for (Entry<String, Object> idObject : datas.get(tableName).entrySet()){
+				where.add(idObject.getKey());
+			}
+		}
+		else {
+			for (String columnValue : columnValueArray) {
+				String[] columnValueArray2 = columnValue.split(":");
+				for (Entry<String, Object> idObject : datas.get(tableName).entrySet()){
+					ArrayList<Map> arrayListMap = (ArrayList<Map>) idObject.getValue();
+					for (Map map : arrayListMap) {
+						if(columnValueArray2[1].equals(map.get(columnValueArray2[0]))){
+							where.add(idObject.getKey());
+						}
+					}
+				}
+			}
+		}
+		return where;
+	}
+	public static void main(String[] args) {
+		HomebrewOrm.getInstance().loadTable("exampleUser");
+		System.out.println(HomebrewOrm.getInstance().where2("exampleUser", "_id:4,"));
+	}
+	
 	public void deleteValue(String tableName,
 							HashMap<String, String> where) {
 		String transaction = "deleteValue;"+tableName+";";
