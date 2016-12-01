@@ -2,16 +2,12 @@ package com.orm;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.annotation.ElementType;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.example.ExampleUser;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
@@ -25,8 +21,8 @@ public class HomebrewOrm {
 	
 	
 	private Map<String, Map<String, Object>> datas;
-	public ArrayList<HomebrewOrmTable> listeTables;
-	public ArrayList<String> listeTransactions;
+	private ArrayList<HomebrewOrmTable> listeTables;
+	private ArrayList<String> listeTransactions;
 	
 	
 	private final String DATA_DIR_NAME = "/data";
@@ -42,6 +38,18 @@ public class HomebrewOrm {
 		datas = new HashMap<String, Map<String,Object>>();
 		if(path != null) {
 			this.databasePath = path;
+			File databaseFile = new File(path);
+			if(!databaseFile.exists()) {
+				databaseFile.mkdirs();
+			}
+			File dataFile = new File(path + DATA_DIR_NAME);
+			if(!dataFile.exists()) {
+				dataFile.mkdirs();
+			}
+			File tableFile = new File(path + TABLE_DIR_NAME);
+			if(!tableFile.exists()) {
+				tableFile.mkdirs();
+			}
 		}
 	}
 	
@@ -228,6 +236,9 @@ public class HomebrewOrm {
 			loadTablesRequired();
 			executeTransactions();
 			writeData();
+			listeTransactions = new ArrayList<String>();
+			datas = new HashMap<String, Map<String,Object>>();
+			listeTables = new ArrayList<HomebrewOrmTable>();
 			flag = true;
 		}
 		else{
@@ -742,54 +753,4 @@ public class HomebrewOrm {
 			System.out.println("]},");
 		}
 	}
-	/*
-	public HashMap<String, ArrayList<Map<String, Object>>> sort(HashMap<String, ArrayList<Map<String, Object>>> map) {
-		HashMap<String, ArrayList<Map<String, Object>>> newMap = new HashMap<String, ArrayList<Map<String, Object>>>();
-		ArrayList<Integer> keys = new ArrayList<Integer>();
-		for(Entry<String, ArrayList<Map<String, Object>>> entry : map.entrySet()) {
-			keys.add(Integer.parseInt(entry.getKey()));
-		}
-		boolean flag = true;
-		int tmp;
-	    while (flag){
-	    	flag= false;
-	    	for(int i = 0; i < keys.size() - 1; i++) {
-				 if(keys.get(i) < keys.get(i+1)) {
-					 tmp = keys.get(i);
-					 keys.set(i, keys.get(i + 1));
-					 keys.set(i + 1, tmp);
-					 flag = true;
-				 }
-			}
-	    }
-	    for(int i = 0; i < keys.size() - 1; i++) {
-			 newMap.put(keys.get(i) + "", map.get(keys.get(i)));
-		}
-		return newMap;
-	}
-	*/
-	/*public static void main(String[] args) {
-		
-		ExampleUser exampleUser = new ExampleUser("jd", "rondeau", 911);
-		HomebrewOrmTable table = new HomebrewOrmTable();
-		table.setTableName("exampleUser");
-		table.addValue(new HomebrewOrmTableValue("firstName", HomebrewOrmDataTypes.stringType.value));
-		table.addValue(new HomebrewOrmTableValue("lastName", HomebrewOrmDataTypes.stringType.value));
-		table.addValue(new HomebrewOrmTableValue("telephoneNumber", HomebrewOrmDataTypes.integerType.value));
-		HomebrewOrm.getInstance().createTable(table);
-		HomebrewOrm.getInstance().insert(exampleUser, "exampleUser");
-		HomebrewOrm.getInstance().commit();
-		
-		HomebrewOrm homebrewOrm = new HomebrewOrm();
-		homebrewOrm.loadTable("exampleUser");
-		HashMap<String, String> where = new HashMap<>();
-		//where.put("blabla", "shiet");
-		//where.put("firstName", "Tiberiu Cristian");
-		//where.put("lastName", "Soares");
-		//homebrewOrm.deleteValue("exampleUser", where);
-		//homebrewOrm.commit();
-		homebrewOrm.pretty(homebrewOrm.select("exampleUser", null));
-		System.out.println(homebrewOrm.select("exampleUser", null).size());
-		//homebrewOrm.writeData();
-	}*/
 }
